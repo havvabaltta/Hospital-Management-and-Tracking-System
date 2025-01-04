@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header {
+            background-color: #09a480;
+            color: #fff;
+            padding: 10px 0;
+            position: relative;
+        }
+
+        .hospital-info h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            text-align: center;
+        }
+
+        nav ul li {
+            display: inline;
+            margin-right: 20px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .admin-panel {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .admin-button {
+            background-color: #09a480;
+            color: #fff;
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .admin-button:hover {
+            background-color: #0a8471;
+        }
+
+        .form-container {
+            display: none;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .form-container form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+        }
+
+        .form-container form input[type="text"],
+        .form-container form input[type="password"] {
+            width: calc(100% - 20px);
+            margin-bottom: 10px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        .form-container form button {
+            background-color: #09a480;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .form-container form button:hover {
+            background-color: #0a8471;
+        }
+
+        .welcome-message {
+            background-color: #09a480;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="hospital-info">
+                <h1>HOSPITAL MANAGE SYSTEM</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#">Ana Sayfa</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Hakkımızda</a></li>
+                    <li><a href="#">İletişim</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="welcome-message">
+        <h2>Welcome Admin</h2>
+    </div>
+
+    <div class="admin-panel">
+        <button class="admin-button" onclick="toggleVisibility('addPatientForm')">Hasta Ekle</button>
+        <button class="admin-button" onclick="toggleVisibility('addDoctorForm')">Doktor Ekle</button>
+        <button class="admin-button" onclick="toggleVisibility('deletePatientForm')">Hasta Sil</button>
+        <button class="admin-button" onclick="toggleVisibility('deleteDoctorForm')">Doktor Sil</button>
+        <button class="admin-button" onclick="toggleVisibility('updatePatientForm')">Hasta Güncelle</button>
+        <button class="admin-button" onclick="toggleVisibility('updateDoctorForm')">Doktor Güncelle</button>
+        <button class="admin-button" onclick="toggleVisibility('updateAppointmentForm')">Randevu Güncelle</button>
+        <button class="admin-button" onclick="toggleVisibility('addReportForm')">Rapor Ekle</button>
+        <button class="admin-button" onclick="toggleVisibility('deleteReportForm')">Rapor Sil</button>
+        <button class="admin-button" onclick="toggleVisibility('updateReportForm')">Rapor Güncelle</button>
+        <button class="admin-button" onclick="toggleVisibility('fetchPatientsForm')">Hasta Görüntüle</button>
+        <button class="admin-button" onclick="toggleVisibility('fetchDoctorsForm')">Doktor Görüntüle</button> 
+        <button class="admin-button" onclick="toggleVisibility('fetchAppointmentsForm')">Randevu Görüntüle</button>
+        <button class="admin-button" onclick="toggleVisibility('fetchReportsForm')">Rapor Görüntüle</button>
+    </div>
+
+    <div id="addPatientForm" class="form-container">
+        <form action="{% url 'add_patient' %}" method="POST">
+            {% csrf_token %}
+            <input type="text" name="patient_id" placeholder="Patient ID" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <input type="text" name="name" placeholder="Name" required>
+            <input type="text" name="surname" placeholder="Surname" required>
+            <input type="text" name="birth_date" placeholder="Birth Date" required>
+            <input type="text" name="gender" placeholder="Gender" required>
+            <input type="text" name="phone" placeholder="Phone" required>
+            <input type="text" name="address" placeholder="Address" required>
+            <button type="submit">Add Patient</button>
+        </form>
+    </div>
+    
+    
+    <div id="addDoctorForm" class="form-container">
+        <form action="{% url 'add_doctor' %}" method="POST">
+            {% csrf_token %}
+            <input type="text" name="doctor_id" placeholder="Doctor ID" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <input type="text" name="name" placeholder="Name" required>
+            <input type="text" name="surname" placeholder="Surname" required>
+            <input type="text" name="specialization" placeholder="Specialization" required>
+            <input type="text" name="hospital" placeholder="Hospital" required>
+            <button type="submit">Add Doctor</button>
+        </form>
+    </div>
+
+
+    <div id="deletePatientForm"  class="form-container">
+        <form action="{% url 'delete_patient' %}" method="POST">
+            {% csrf_token %}
+            <input type="text" name="patient_id" placeholder="Patient ID" required>
+            <button type="submit">Delete Patient</button>
+        </form>
+    </div>
+
+    <div id="deleteDoctorForm"  class="form-container">
+        <form action="{% url 'delete_doctor' %}" method="POST">
+            {% csrf_token %}
+            <input type="text" name="doctor_id" placeholder="Doctor ID" required>
+            <button type="submit">Delete Doctor</button>
+        </form>
+    </div>
+
+
+    <div id="updatePatientForm"  class="form-container">
+        <form action="{% url 'update_patient' %}" method="POST">
+            {% csrf_token %}
+            <input type="text" name="patient_id" placeholder="Patient ID" required>
+            <input type="password" name="new_password" placeholder="New Password" required>
+            <input type="text" name="new_name" placeholder="New Name" required>
+            <input type="text" name="new_surname" placeholder="New Surname" required>
+            <input type="text" name="new_birth_date" placeholder="New Birth Date" required>
+            <input type="text" name="new_gender" placeholder="New Gender" required>
+            <input type="text" name="new_phone" placeholder="New Phone" required>
+            <input type="text" name="new_address" placeholder="New Address" required>
+            <button type="submit">Update Patient</button>
+        </form>
+    </div>
+
+    <div id="updateDoctorForm"  class="form-container">
+        <form action="{% url 'update_doctor' %}" method="POST">
+            {% csrf_token %}
+            <input type="text" name="doctor_id" placeholder="Doctor ID" required>
+            <input type="password" name="new_password" placeholder="New Password" required>
+            <input type="text" name="new_name" placeholder="New Name" required>
+            <input type="text" name="new_surname" placeholder="New Surname" required>
+            <input type="text" name="new_specialization" placeholder="New Specialization" required>
+            <input type="text" name="new_hospital" placeholder="New Hospital" required>
+            <button type="submit">Update Doctor</button>
+        </form>
+    </div>
+
+    <div id="updateAppointmentForm" class="form-container">
+        <form action="{% url 'update_appointment' %}" method="POST">
+            {% csrf_token %}
+            <input type="text" name="appointment_id" placeholder="Randevu ID" required>
+            <input type="text" name="new_date" placeholder="Yeni Tarih" required>
+            <input type="text" name="new_time" placeholder="Yeni Saat" required>
+            <button type="submit">Randevu Güncelle</button>
+        </form>
+    </div>
+
+    <!-- Rapor Silme Formu -->
+    <div id="deleteReportForm" class="form-container">
+        <form action="{% url 'delete_report' %}" method="POST">
+            {% csrf_token %}
+            <input type="text" name="report_id" placeholder="Rapor ID" required>
+            <button type="submit">Rapor Sil</button>
+        </form>
+    </div>
+    
+    <div id="addReportForm" class="form-container">
+        <form action="{% url 'add_report' %}" method="POST">
+            {% csrf_token %}
+            <input type="text" name="appointment_id" placeholder="Appointment ID" required>
+            <input type="text" name="doctor_id" placeholder="Doctor ID" required>
+            <input type="text" name="patient_id" placeholder="Patient ID" required>
+            <input type="date" name="report_date" placeholder="Report Date" required>
+            <textarea name="report_content" placeholder="Report Content" required></textarea>
+            <button type="submit">Add Report</button>
+        </form>
+    </div>
+    
+    <!-- Rapor Güncelleme Formu -->
+    <div id="updateReportForm" class="form-container">
+        <form action="{% url 'update_report' %}" method="POST">
+            {% csrf_token %}
+            <input type="text" name="report_id" placeholder="Report ID" required>
+            <input type="date" name="new_report_date" placeholder="New Report Date" required>
+            <textarea name="new_report_content" placeholder="New Report Content" required></textarea>
+            <button type="submit">Update Report</button>
+        </form>
+    </div>
+   
+   <!-- Hasta Görüntüleme Formu -->
+<div id="fetchPatientsForm" class="form-container">
+    <button class="admin-button" onclick="fetchPatients()">Hastaları Görüntüle</button>
+    <div id="patientList" style="display: none;">
+        <h3>Hastalar</h3>
+        <ul id="patientListItems"></ul>
+    </div>
+</div>
+
+<!-- Doktor Görüntüleme Formu -->
+<div id="fetchDoctorsForm" class="form-container">
+    <button class="admin-button" onclick="fetchDoctors()">Doktorları Görüntüle</button>
+    <div id="doctorList" style="display: none;">
+        <h3>Doktorlar</h3>
+        <ul id="doctorListItems"></ul>
+    </div>
+</div>
+
+<!-- Randevu Görüntüleme Formu -->
+<div id="fetchAppointmentsForm" class="form-container">
+    <button class="admin-button" onclick="fetchAppointments()">Randevuları Görüntüle</button>
+    <div id="appointmentList" style="display: none;">
+        <h3>Randevular</h3>
+        <ul id="appointmentListItems"></ul>
+    </div>
+</div>
+
+<!-- Rapor Görüntüleme Formu -->
+<div id="fetchReportsForm" class="form-container">
+    <button class="admin-button" onclick="fetchReports()">Raporları Görüntüle</button>
+    <div id="reportList" style="display: none;">
+        <h3>Raporlar</h3>
+        <ul id="reportListItems"></ul>
+    </div>
+</div>
+
+
+
+    <script>
+        function toggleVisibility(elementId) {
+            var element = document.getElementById(elementId);
+            if (element.style.display === 'none') {
+                element.style.display = 'flex';
+            } else {
+                element.style.display = 'none';
+            }
+        }
+        window.onload = function() {
+            // Check if there is a message and display it as an alert
+            var message = "{{ message }}";
+            if (message) {
+                alert(message);
+            }
+        }
+        function fetchPatients() {
+        fetch('/api/patients/')
+            .then(response => response.json())
+            .then(data => {
+                const patientList = document.getElementById('patientListItems');
+                patientList.innerHTML = '';
+                data.patients.forEach(patient => {
+                    const listItem = document.createElement('li');
+                    let patientInfo = '';
+                    for (const key in patient) {
+                        patientInfo += `${key}: ${patient[key]}, `;
+                    }
+                    listItem.textContent = patientInfo.slice(0, -2); // Remove the last comma and space
+                    patientList.appendChild(listItem);
+                });
+                document.getElementById('patientList').style.display = 'block';
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function fetchDoctors() {
+        fetch('/api/doctors/')
+            .then(response => response.json())
+            .then(data => {
+                const doctorList = document.getElementById('doctorListItems');
+                doctorList.innerHTML = '';
+                data.doctors.forEach(doctor => {
+                    const listItem = document.createElement('li');
+                    let doctorInfo = '';
+                    for (const key in doctor) {
+                        doctorInfo += `${key}: ${doctor[key]}, `;
+                    }
+                    listItem.textContent = doctorInfo.slice(0, -2); // Remove the last comma and space
+                    doctorList.appendChild(listItem);
+                });
+                document.getElementById('doctorList').style.display = 'block';
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function fetchAppointments() {
+        fetch('/api/appointments/')
+            .then(response => response.json())
+            .then(data => {
+                const appointmentList = document.getElementById('appointmentListItems');
+                appointmentList.innerHTML = '';
+                data.appointments.forEach(appointment => {
+                    const listItem = document.createElement('li');
+                    let appointmentInfo = '';
+                    for (const key in appointment) {
+                        appointmentInfo += `${key}: ${appointment[key]}, `;
+                    }
+                    listItem.textContent = appointmentInfo.slice(0, -2); // Remove the last comma and space
+                    appointmentList.appendChild(listItem);
+                });
+                document.getElementById('appointmentList').style.display = 'block';
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function fetchReports() {
+    fetch('/api/reports/')
+        .then(response => response.json())
+        .then(data => {
+            const reportList = document.getElementById('reportListItems');
+            reportList.innerHTML = '';
+            data.reports.forEach(report => {
+                const listItem = document.createElement('li');
+                const reportContent = document.createElement('div');
+                reportContent.innerHTML = `Rapor ID: ${report.Rapor_ID}, Randevu ID: ${report.Randevu_ID}, Doctor ID: ${report.Doctor_ID}, Patient ID: ${report.Patient_ID}, Tarih: ${report.Rapor_Tarihi}, İçerik: ${report.Rapor_Icerigi}`;
+                
+                // Check if the report content contains a drive link
+                if (report.Rapor_Icerigi.includes('drive.google.com')) {
+                    const driveLink = document.createElement('a');
+                    driveLink.href = report.Rapor_Icerigi; // Set the drive link
+                    driveLink.textContent = 'View Drive Link'; // Display text for the link
+                    reportContent.appendChild(driveLink);
+                }
+
+                listItem.appendChild(reportContent);
+                reportList.appendChild(listItem);
+            });
+            document.getElementById('reportList').style.display = 'block';
+        })
+        .catch(error => console.error('Error:', error));
+}
+       
+    </script>
+</body>
+</html>

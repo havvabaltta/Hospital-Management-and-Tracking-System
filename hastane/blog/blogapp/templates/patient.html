@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #212932;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;  
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header {
+            background-color: #09a480;
+            color: #fff;
+            padding: 10px 0;
+            position: relative;
+        }
+
+        .hospital-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: absolute;
+            top: 0;
+            left: 20px;
+        }
+
+        .hospital-info h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        nav {
+            position: absolute;
+            top: 0;
+            right: 20px;
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            text-align: center;
+        }
+
+        nav ul li {
+            display: inline;
+            margin-right: 20px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .patient-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .admin-button {
+            background-color: #09a480;
+            color: #fff;
+            padding: 10px 20px;
+            margin: 10px;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .admin-button:hover {
+            background-color: #007356;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #ffffff;
+            color: #333333;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #09a480;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        /* Randevu formu stil değişiklikleri */
+        #patient_add_randevu {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+            background-color: #333;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        #randevuForm {
+            display: flex;
+            flex-direction: column;
+            width: 300px;
+        }
+
+        #randevuForm label {
+            margin-bottom: 5px;
+            color: #fff;
+        }
+
+        #randevuForm input {
+            padding: 8px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 4px;
+        }
+
+        #randevuForm button {
+            background-color: #09a480;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #randevuForm button:hover {
+            background-color: #007356;
+        }
+
+        #raporListItems {
+            background-color: #007356;
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 20px;
+        }
+
+        #raporListItems li {
+            margin-bottom: 10px;
+            padding: 8px;
+            background-color: #007356;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        #raporListItems li:hover {
+            background-color: #007356;
+            transition: background-color 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="hospital-info">
+                <h1>HOSPITAL MANAGE SYSTEM</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#">Ana Sayfa</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Hakkımızda</a></li>
+                    <li><a href="#">İletişim</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <div class="patient-buttons">
+        <button class="admin-button" onclick="toggleVisibility('appointmentsTable')">Randevularım</button>
+        <button class="admin-button" onclick="toggleVisibility('patient_add_randevu')">Randevu Al</button>
+        <button class="admin-button" onclick="toggleVisibility('patient_raporlar')">Raporlarım</button>
+        <button class="admin-button" onclick="toggleVisibility('patient_profil_bilgisi');">Profil Bilgisi</button>
+    </div>
+    <div id="appointmentsTable" style="display: none;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Randevu ID</th>
+                    <th>Tarih</th>
+                    <th>Saat</th>
+                    <th>Doctor ID</th>
+                    <th>Patient ID</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for appointment in randevu %}
+                <tr>
+                    <td>{{ appointment.randevu_id }}</td>
+                    <td>{{ appointment.tarih }}</td>
+                    <td>{{ appointment.saat }}</td>
+                    <td>{{ appointment.doctor_id }}</td>
+                    <td>{{ appointment.patient_id }}</td>
+                    <td>
+                        <button type="button" class="admin-button" onclick="deleteAppointment('{{ appointment.randevu_id }}', '{{ appointment.patient_id }}');">Sil</button>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6">No appointments found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div id="patient_profil_bilgisi" style="display: none;">
+        <h2>Profil Bilgileri</h2>
+        <p>Ad: <span id="profil_ad"></span></p>
+        <p>Soyad: <span id="profil_soyad"></span></p>
+        <p>Doğum Tarihi: <span id="profil_dogum_tarihi"></span></p>
+        <p>Cinsiyet: <span id="profil_cinsiyet"></span></p>
+        <p>Telefon: <span id="profil_tel"></span></p>
+        <p>Adres: <span id="profil_adres"></span></p>
+    </div>
+
+    <div id="patient_add_randevu" style="display: none;">
+        <form id="randevuForm" method="post">
+            {% csrf_token %}
+            <label for="tarih">Tarih:</label>
+            <input type="date" id="tarih" name="tarih" required><br>
+            <label for="saat">Saat:</label>
+            <input type="time" id="saat" name="saat" required><br>
+            <label for="doctor_id">Doktor ID:</label>
+            <input type="number" id="doctor_id" name="doctor_id" required><br>
+            <button type="button" onclick="submitRandevuForm()">Randevu Al</button>
+        </form>
+    </div>
+
+    <div id="patientsTable" style="display: none;">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Surname</th>
+                    <th>Birthday</th>
+                    <th>Gender</th>
+                    <th>Phone</th>
+                    <th>Address</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Dinamik içerik JavaScript ile doldurulacak -->
+            </tbody>
+        </table>
+</div>
+
+    <div id="patient_raporlar" style="display: none;">
+        <div id="raporListItems"></div>
+    </div>
+
+    <script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function fetchAppointments() {
+        const userId = getCookie('username');
+        if (!userId) {
+            alert('Kullanıcı ID bulunamadı.');
+            return;
+        }
+        fetch(`/api/appointments/${userId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (!data || !data.randevu || !Array.isArray(data.randevu)) {
+                    throw new Error('Invalid data structure');
+                }
+                displayAppointments(data.randevu);
+            })
+            .catch(error => {
+                console.error('Randevular yüklenirken bir hata oluştu:', error);
+            });
+    }
+
+    function displayAppointments(appointments) {
+    const table = document.getElementById('appointmentsTable');
+    let rows = appointments.map(appointment => `
+        <tr>
+            <td>${appointment.randevu_id}</td>
+            <td>${appointment.tarih}</td>
+            <td>${appointment.saat}</td>
+            <td>${appointment.doctor_id}</td>
+            <td>${appointment.patient_id}</td>
+            <td>
+                <button type="button" class="admin-button" onclick="deleteAppointment('${appointment.randevu_id}', '${appointment.patient_id}');">Sil</button>
+            </td>
+        </tr>
+    `).join('');
+    table.innerHTML = `<table>
+        <thead>
+            <tr>
+                <th>Randevu ID</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Doctor ID</th>
+                <th>Patient ID</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+    </table>`;
+    table.style.display = 'block';
+}
+
+    function toggleVisibility(id) {
+    var elements = ['appointmentsTable', 'patient_add_randevu', 'patient_raporlar', 'patient_profil_bilgisi', 'patientsTable'];
+    elements.forEach(function(elementId) {
+        var element = document.getElementById(elementId);
+        if (element) { // Elementin varlığını kontrol et
+            if (elementId === id) {
+                if (element.style.display === 'none') {
+                    element.style.display = 'block';
+                    if (id === 'appointmentsTable') {
+                        fetchAppointments();
+                    } else if (id === 'patient_profil_bilgisi') {
+                        fetchProfile();
+                    } else if (id === 'patientsTable') {
+                        fetchPatients();
+                    } else if (id === 'patient_raporlar') {
+                        fetchRaporlar();
+                    }
+                } else {
+                    element.style.display = 'none';
+                }
+            } else {
+                element.style.display = 'none';
+            }
+        } else {
+            console.error('Element not found: ' + elementId); // Element bulunamazsa hata mesajı göster
+        }
+    });
+}
+    
+    // profil bilgileri backend
+    function fetchProfile() {
+    const userId = getCookie('username');
+    if (!userId) {
+        alert('Kullanıcı ID bulunamadı.');
+        return;
+    }
+    fetch(`/api/profil/${userId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (!data || !data.profil) {
+                throw new Error('Invalid data structure');
+            }
+            displayProfile(data.profil);
+        })
+        .catch(error => {
+            console.error('Profil yüklenirken bir hata oluştu:', error);
+        });
+}
+
+function displayProfile(profil) {
+    document.getElementById('profil_ad').textContent = profil.ad;
+    document.getElementById('profil_soyad').textContent = profil.soyad;
+    document.getElementById('profil_dogum_tarihi').textContent = profil['Doğum Tarihi'];
+    document.getElementById('profil_cinsiyet').textContent = profil.cinsiyet;
+    document.getElementById('profil_tel').textContent = profil.tel;
+    document.getElementById('profil_adres').textContent = profil.adres;
+    document.getElementById('patient_profil_bilgisi').style.display = 'block';
+}
+
+function submitRandevuForm() {
+    console.log("submitRandevuForm is called");
+    var form = document.getElementById('randevuForm');
+    var data = new FormData(form);
+
+    var patientId = getCookie('username');  // Ensure this is getting the correct ID
+    console.log("Patient ID:", patientId);  // Check the output in the browser console
+    console.log("URL being requested:", `/api/randevu/${patientId}`);
+
+    fetch(`/api/randevu/${patientId}`, {
+    method: 'POST',
+    body: data,
+    credentials: 'include',
+    headers: {
+        'X-CSRFToken': getCookie('csrftoken')
+    }
+}).then(response => {
+    alert('Randevu başarıyla alındı.');
+    toggleVisibility('appointmentsTable'); // Reload appointments
+})
+
+}
+
+function deleteAppointment(randevuId, patientId) {
+    if (!confirm('Are you sure you want to delete this appointment?')) {
+        return;
+    }
+
+    fetch(`/api/deleteAppointment/${randevuId}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),  // CSRF token
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ patient_id: patientId })  // Gönderilecek veriyi JSON formatında hazırla
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to delete the appointment');
+        }
+        return response.json();
+    })
+    .then(data => {
+        alert(data.message || 'Appointment successfully deleted.');
+        fetchAppointments();  // Randevuları yeniden yükle
+    })
+    .catch(error => {   
+        console.error('Error:', error);
+        alert('Error deleting appointment: ' + error.message);
+    });
+}
+
+
+function fetchRaporlar() {
+    const patientId = getCookie('username'); // Assuming username is the patient ID
+    fetch(`/api/patient/${patientId}/reports/`)
+        .then(response => response.json())
+        .then(data => {
+            const raporList = document.getElementById('raporListItems');
+            if (raporList) {
+                raporList.innerHTML = '';
+                data.reports.forEach(rapor => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = `Rapor ID: ${rapor.Rapor_ID}, İçerik: ${rapor.Rapor_Icerigi}`;
+                    
+                    const goButton = document.createElement('button');
+                    goButton.textContent = 'Git';
+                    goButton.addEventListener('click', () => {
+                        const link = findLinkInRapor(rapor.Rapor_Icerigi); // Rapor içeriğindeki linki bul
+                        if (link) {
+                            window.location.href = link; // Link varsa yönlendir
+                        } else {
+                            alert('Raporda bir link bulunamadı.');
+                        }
+                    });
+
+                    listItem.appendChild(goButton);
+                    raporList.appendChild(listItem);
+                });
+                document.getElementById('patient_raporlar').style.display = 'block';
+            } else {
+                console.error('Element with ID "raporListItems" not found.');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+function findLinkInRapor(raporIcerigi) {
+    // Rapor içeriğindeki linki bulmak için gerekli işlemleri yapın
+    // Örnek olarak, basit bir link arama işlemi:
+    const linkRegex = /https?:\/\/\S+/; // Basit bir link regex'i
+    const match = raporIcerigi.match(linkRegex);
+    return match ? match[0] : null;
+}
+
+    </script>
+</body>
+</html>
+
